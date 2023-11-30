@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
-
-	"github.com/mikerybka/util"
 )
 
 type Package struct {
@@ -15,17 +13,14 @@ type Package struct {
 	PacmanName string
 }
 
-func (p *Package) Install(os string) error {
+func (p *Package) InstallCmd(os string) *exec.Cmd {
 	if strings.HasPrefix(os, "debian") || strings.HasPrefix(os, "ubuntu") {
-		cmd := exec.Command("apt", "install", "-y", p.AptName)
-		return util.Run(cmd)
+		return exec.Command("apt", "install", "-y", p.AptName)
 	} else if strings.HasPrefix(os, "fedora") || strings.HasPrefix(os, "rhel") {
-		cmd := exec.Command("dnf", "install", "-y", p.DnfName)
-		return util.Run(cmd)
+		return exec.Command("dnf", "install", "-y", p.DnfName)
 	} else if strings.HasPrefix(os, "arch") || strings.HasPrefix(os, "manjaro") {
-		cmd := exec.Command("pacman", "-Syu", p.PacmanName)
-		return util.Run(cmd)
+		return exec.Command("pacman", "-Syu", p.PacmanName)
 	} else {
-		return fmt.Errorf("unknown os: %s", os)
+		panic(fmt.Errorf("unknown os: %s", os))
 	}
 }
