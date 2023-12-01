@@ -3,24 +3,34 @@ package infra
 import (
 	"fmt"
 	"os/exec"
-	"strings"
+
+	"github.com/mikerybka/util"
 )
 
 type Package struct {
-	Name       string
-	AptName    string
-	DnfName    string
-	PacmanName string
+	Name         string
+	HomebrewName string
+	AptName      string
+	DnfName      string
+	PacmanName   string
 }
 
-func (p *Package) InstallCmd(os string) *exec.Cmd {
-	if strings.HasPrefix(os, "debian") || strings.HasPrefix(os, "ubuntu") {
-		return exec.Command("apt", "install", "-y", p.AptName)
-	} else if strings.HasPrefix(os, "fedora") || strings.HasPrefix(os, "rhel") {
-		return exec.Command("dnf", "install", "-y", p.DnfName)
-	} else if strings.HasPrefix(os, "arch") || strings.HasPrefix(os, "manjaro") {
-		return exec.Command("pacman", "-Syu", p.PacmanName)
-	} else {
-		panic(fmt.Errorf("unknown os: %s", os))
+func (p *Package) InstallLocal() error {
+	pm := util.PackageManager()
+	switch pm {
+	case "homebrew":
+		cmd := exec.Command("brew", "install", p.HomebrewName)
+		return util.Run(cmd)
+	case "apt":
+		cmd := exec.Command("apt", "install", "-y", p.AptName)
+		return util.Run(cmd)
+	case "pacman":
+		cmd := exec.Command("pacman", "-Syu", p.PacmanName)
+		return util.Run(cmd)
+	case "dnf":
+		cmd := exec.Command("dnf", "install", "-y", p.DnfName)
+		return util.Run(cmd)
+	default:
+		return fmt.Errorf("unknown package manager: %s", pm)
 	}
 }

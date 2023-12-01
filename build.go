@@ -42,10 +42,10 @@ func Build(path string, buildDir string) error {
 			OS:   "linux",
 			Arch: "riscv64",
 		},
-		{
-			OS:   "wasip1",
-			Arch: "wasm",
-		},
+		// {
+		// 	OS:   "wasip1",
+		// 	Arch: "wasm",
+		// },
 	}
 
 	for _, env := range envs {
