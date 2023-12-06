@@ -11,6 +11,8 @@ import (
 	"github.com/mikerybka/util"
 )
 
+var DefaultMachine = &MachineConfig{}
+
 type MachineConfig struct {
 	Packages []*Package
 	Binaries map[string]string
